@@ -24,6 +24,9 @@ import com.example.wordsapp.databinding.ActivityDetailBinding
 
 class DetailActivity : AppCompatActivity() {
 
+    companion object { // companion companion {} means, it is associated only with this activity
+        const val LETTER = "letter"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,7 +39,7 @@ class DetailActivity : AppCompatActivity() {
         // Retrieve the LETTER from the Intent extras
         // intent.extras.getString returns String? (String or null)
         // so toString() guarantees that the value will be a String
-        val letterId = intent?.extras?.getString("letter").toString()
+        val letterId = intent?.extras?.getString(LETTER).toString()
 
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
