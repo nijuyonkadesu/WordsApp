@@ -65,8 +65,8 @@ class LetterAdapter :
         holder.button.text = item.toString()
         holder.button.setOnClickListener {
             val context = holder.view.context
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.LETTER, holder.button.text.toString())
+            val intent = Intent(context, DetailActivity::class.java) // Activity to start
+            intent.putExtra(DetailActivity.LETTER, holder.button.text.toString()) // send 'letter' message with the letter present on the button, eg: A or B or C ...
             context.startActivity(intent)
         }
     }
