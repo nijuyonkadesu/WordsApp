@@ -12,15 +12,19 @@ import com.example.wordsapp.databinding.FragmentWordListBinding
 
 class WordListFragment : Fragment() {
     companion object { // companion companion {} means, it is associated only with this activity
-        const val LETTER = "letter"
+        const val LETTER = "letter" // same as letter safeArg in nav_graph.xml
         const val SEARCH_PREFIX = "https://www.google.com/search?q="
     }
     private var _binding: FragmentWordListBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
+    private lateinit var letterId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let{
+            letterId = it.getString(LETTER).toString()
+        }
         setHasOptionsMenu(true)
     }
 
@@ -35,18 +39,12 @@ class WordListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // remaining setup
         recyclerView = binding.recyclerView
-
-        // Retrieve the LETTER from the Intent extras
-        // activity.intent.extras.getString returns String? (String or null)
-        // so toString() guarantees that the value will be a String
-        val letterId = activity?.intent?.extras?.getString(LETTER).toString()
-
-        recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
-        recyclerView.adapter = WordAdapter(letterId, this.requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = WordAdapter(letterId, requireContext())
 
         // Adds a [DividerItemDecoration] between items
         recyclerView.addItemDecoration(
-            DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         )
     }
 
