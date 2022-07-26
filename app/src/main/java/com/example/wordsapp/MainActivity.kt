@@ -22,7 +22,7 @@ import com.example.wordsapp.databinding.ActivityMainBinding
 /**
  * Main Activity and entry point for the app. Displays a RecyclerView of letters.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() { // repurpose MainActivity as FragmentContainerView >- acts as NavHost for letter and word list fragments
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
