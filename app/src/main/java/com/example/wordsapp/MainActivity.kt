@@ -17,19 +17,27 @@ package com.example.wordsapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.wordsapp.databinding.ActivityMainBinding
 
 /**
  * Main Activity and entry point for the app. Displays a RecyclerView of letters.
  */
 class MainActivity : AppCompatActivity() { // repurpose MainActivity as FragmentContainerView >- acts as NavHost for letter and word list fragments
-
+    private lateinit var navController: NavController  // set in onCreate()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment // as <- runtime type casting
+        navController = navHostFragment.navController
+        setupActionBarWithNavController(navController) // ensures app bar buttons like LetterListFragment are visible <- "they said"
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp() // navigateUp() might fail. handles up navigation
+    }
 }
