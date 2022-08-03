@@ -11,10 +11,12 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.runner.AndroidJUnit4
 import junit.framework.TestCase.assertEquals
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class NavigationTests {
+    @Test
     fun navigate_to_words_nav_component(){
         val navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
