@@ -22,24 +22,24 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 class SettingsDataStore(context: Context) {
     private val IS_LINEAR_LAYOUT_MANAGER = booleanPreferencesKey("is_linear_layout_manager")
 
+    // only emit the preferred preferences, instead of the whole data (Flow's behaviour)
+    val preferenceFlow: Flow<Boolean> = context.dataStore.data
+        .catch {
+            if (it is IOException) {
+                it.printStackTrace()
+                emit(emptyPreferences())
+            } else {
+                throw it // rethrow, any other different kinds of exception
+            }
+        }
+        .map { preferences ->
+            // On the first run of the app, we will use LinearLayoutManager by default
+            preferences[IS_LINEAR_LAYOUT_MANAGER] ?: true
+        }
+
     suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: Boolean, context: Context) {
         context.dataStore.edit { preferences ->
             preferences[IS_LINEAR_LAYOUT_MANAGER] = isLinearLayoutManager
-
-            // only emit the preferred preferences, instead of the whole data (Flow's behaviour)
-            val preferenceFlow: Flow<Boolean> = context.dataStore.data
-                .catch {
-                    if (it is IOException) {
-                        it.printStackTrace()
-                        emit(emptyPreferences())
-                    } else {
-                        throw it // rethrow, any other different kinds of exception
-                    }
-                }
-                .map { preferences ->
-                    // On the first run of the app, we will use LinearLayoutManager by default
-                    preferences[IS_LINEAR_LAYOUT_MANAGER] ?: true
-                }
         }
     }
 }

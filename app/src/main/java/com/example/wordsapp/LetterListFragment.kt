@@ -4,12 +4,18 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.wordsapp.data.SettingsDataStore
 import com.example.wordsapp.databinding.FragmentLetterListBinding
+import kotlinx.coroutines.launch
 
 // check commit 9d7f928ede0fa7415e442428f33aaa18c4d268b4 for implementation using activities
+private lateinit var SettingsDataStore: SettingsDataStore
+
 class LetterListFragment : Fragment() {
     private var _binding: FragmentLetterListBinding? = null // cannot use Fragment unless a View is ready. For time being, it has to be null < onCreate() to onCreateView() >, only then can bind views, properties
     private val binding get() = _binding!! // _name not meant to access directly
@@ -33,7 +39,14 @@ class LetterListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // 3
         recyclerView = binding.recyclerView // RecyclerView automatically was attached, no need to call findViewById()
-        chooseLayout()
+        SettingsDataStore = SettingsDataStore(requireContext())
+        SettingsDataStore.preferenceFlow.asLiveData().observe(viewLifecycleOwner) { value ->
+            isLinearLayoutManager = value
+            // set layout
+            chooseLayout()
+            // Redraw the menu
+            activity?.invalidateOptionsMenu()
+        }
     }
     override fun onDestroyView() {
         super.onDestroyView()
@@ -68,13 +81,14 @@ class LetterListFragment : Fragment() {
         return when(item.itemId){ // handle only layout icon when tapped -> item.itemId is any item that is being tapped
             R.id.action_switch_layout -> {
                 isLinearLayoutManager =! isLinearLayoutManager // toggle layout property when menuItem is pressed
-                // set layout and icon
-                chooseLayout()
+                lifecycleScope.launch {
+                    SettingsDataStore.saveLayoutToPreferencesStore(isLinearLayoutManager, requireContext())
+                }
                 setIcon(item)
-                return true
+                true
             }
             else ->
-                return super.onOptionsItemSelected(item) // for other items in menu, use the default event handler otherwise
+                super.onOptionsItemSelected(item) // for other items in menu, use the default event handler otherwise
         }
     }
 }
